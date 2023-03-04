@@ -4,8 +4,8 @@
 #include "ESPAsyncWebServer.h"
 #include "SPIFFS.h"
 
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "SSID_NAME";
+const char* password = "SSID_PASSWORD";
 
 const int espLedPin = 2;
 
@@ -59,32 +59,27 @@ void setup() {
 
   Serial.println(WiFi.localIP());
 
-  defineRoutes();
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/index.html", String(), httpPlaceHolderProcessor);
+  });
+
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/style.css", "text/css");
+  });
+
+  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+    digitalWrite(espLedPin, HIGH);    
+    request->send(SPIFFS, "/index.html", String(), false, httpPlaceHolderProcessor);
+  });
+
+  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+    digitalWrite(espLedPin, LOW);    
+    request->send(SPIFFS, "/index.html", String(), false, httpPlaceHolderProcessor);
+  });
 
   server.begin();
 }
 
 void loop() {
   keepAlive++;
-}
-
-void defineRoutes() {
-
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", String(), httpPlaceHolderProcessor);
-  });
-
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/style.css", "text/css");
-  });
-
-  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
-    digitalWrite(espLedPin, HIGH);    
-    request->send(SPIFFS, "/index.html", String(), false, httpPlaceHolderProcessor);
-  });
-
-  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request){
-    digitalWrite(espLedPin, LOW);    
-    request->send(SPIFFS, "/index.html", String(), false, httpPlaceHolderProcessor);
-  });
 }
