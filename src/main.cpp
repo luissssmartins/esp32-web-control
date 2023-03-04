@@ -11,7 +11,7 @@ const int espLedPin = 2;
 
 int keepAlive = 0;
 
-String ledState;
+String ledState, keepAliveValue;
 
 AsyncWebServer server(80);
 
@@ -29,6 +29,11 @@ String httpPlaceHolderProcessor(const String& val) {
     Serial.println(ledState);
 
     return ledState;
+
+  } else if (val == "KEEPALIVE") {
+    keepAliveValue = keepAlive;
+
+    return keepAliveValue;
   }
 
   return String();
