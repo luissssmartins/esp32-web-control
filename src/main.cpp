@@ -81,5 +81,5 @@ void setup() {
 }
 
 void loop() {
-  keepAlive++;
+  
 }
